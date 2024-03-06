@@ -20,8 +20,9 @@ def main():
         ti_format = ti_format.replace("\\deg", "°")  # Replace "\deg" with "°"
         ti_format = ti_format.replace("\\left(", "(") # Replace "\left(" with "("
         ti_format = ti_format.replace("\\right)", ")") # Replace "\right)" with ")"
-        ti_format = ti_format.replace("\\sqrt", "√") # Replace "\sqrt" with "√"
-        ti_format = ti_format.replace("\\frac{", "(").replace("}{", ")/(").replace("}", ")").replace("{", "").replace("}", "") # Replace "\frac{}{}" with "()/()"
+        ti_format = ti_format.replace("\\sqrt{", "√(") # Replace "\sqrt" with "√"
+        print(ti_format)
+        ti_format = ti_format.replace("\\frac{", "(").replace("}{", ")/(").replace("}", ")") # Replace "\frac{}{}" with "()/()"
 
         # Handle exponentiation
         index = 0
