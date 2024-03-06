@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latex to TI-Nspire Converter</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    #inputBox {
+        width: 80%;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+    #outputArea {
+        width: 80%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+    <h1>Latex to TI-Nspire Converter</h1>
+    <input type="text" id="inputBox" placeholder="Enter LaTeX code and press Enter">
+    <div id="outputArea"></div>
+
+    <script>
+        function main() {
+            function latex_to_ti_nspire(latex_str) {
+                latex_str = `${latex_str}`;
+                let solve = false;
+                if (latex_str[0] === "s") {
+                    solve = true;
+                    latex_str = latex_str.slice(1);
+                }
+                let ti_format = latex_str.replace("{,}", ".");
+                ti_format = ti_format.replace(/\\cdot/g, "*");
+                ti_format = ti_format.replace(/\\ /g, "");
+                ti_format = ti_format.replace(/\\cos/g, "cos");
+                ti_format = ti_format.replace(/\\sin/g, "sin");
+                ti_format = ti_format.replace(/\\tan/g, "tan");
+                ti_format = ti_format.replace(/\\alpha/g, "α");
+                ti_format = ti_format.replace(/\\beta/g, "β");
+                ti_format = ti_format.replace(/\\gamma/g, "γ");
+                ti_format = ti_format.replace(/\\delta/g, "δ");
+                ti_format = ti_format.replace(/\\theta/g, "θ");
+                ti_format = ti_format.replace(/\\pi/g, "π");
+                ti_format = ti_format.replace(/\\deg/g, "°");
+                ti_format = ti_format.replace(/\\left\(/g, "(");
+                ti_format = ti_format.replace(/\\right\)/g, ")");
+                ti_format = ti_format.replace(/\\sqrt{/g, "√(");
+                ti_format = ti_format.replace(/\\frac{/g, "(").replace(/}{/g, ")/(").replace(/}/g, ")");
+
+                
+                let index = 0;
+                while (ti_format.includes("^", index)) {
+                    index = ti_format.indexOf("^", index);
+                    ti_format = ti_format.slice(0, index) + ti_format.slice(index).replace("^", "^(", 1);
+                    index += 2;
+                    let end_bracket_index = index;
+                    while (end_bracket_index < ti_format.length && (ti_format[end_bracket_index].match(/\d/) || ti_format[end_bracket_index] === '.')) {
+                        end_bracket_index++;
+                    }
+                    ti_format = ti_format.slice(0, end_bracket_index) + ")" + ti_format.slice(end_bracket_index);
+                }
+            
+                if (solve) {
+                    ti_format = "solve(" + ti_format + ")";
+                }
+            
+                return ti_format;
+            }
+            
+
+            const inputBox = document.getElementById("inputBox");
+            const outputArea = document.getElementById("outputArea");
+
+            inputBox.addEventListener("keyup", function(event) {
+                if (event.keyCode === 13) {
+                    const latexInput = inputBox.value.trim();
+                    const ti_nspire_str = latex_to_ti_nspire(latexInput);
+                    outputArea.textContent = ti_nspire_str;
+                }
+            });
+        }
+
+        main();
+    </script>
+</body>
+</html>
