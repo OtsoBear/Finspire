@@ -21,12 +21,17 @@
         border-radius: 5px;
         font-size: 16px;
     }
+    #copyMessage {
+        display: none;
+        color: green;
+    }
 </style>
 </head>
 <body>
     <h1>Latex to TI-Nspire Converter</h1>
     <input type="text" id="inputBox" placeholder="Enter LaTeX code and press Enter">
     <div id="outputArea"></div>
+    <div id="copyMessage"></div>
 
     <script>
         function main() {
@@ -37,7 +42,7 @@
                     solve = true;
                     latex_str = latex_str.slice(1);
                 }
-                let ti_format = latex_str.replace("{,}", ".");
+                let ti_format = latex_str.replace(/{,}/g, ".");
                 ti_format = ti_format.replace(/\\cdot/g, "*");
                 ti_format = ti_format.replace(/\\ /g, "");
                 ti_format = ti_format.replace(/\\cos/g, "cos");
@@ -52,7 +57,7 @@
                 ti_format = ti_format.replace(/\\deg/g, "°");
                 ti_format = ti_format.replace(/\\left\(/g, "(");
                 ti_format = ti_format.replace(/\\right\)/g, ")");
-                ti_format = ti_format.replace(/\\sqrt{/g, "√(");
+                ti_format = ti_format.replace(/\\sqrt{/g, "sqrt(");
                 ti_format = ti_format.replace(/\\frac{/g, "(").replace(/}{/g, ")/(").replace(/}/g, ")");
 
                 
@@ -75,15 +80,32 @@
                 return ti_format;
             }
             
-
             const inputBox = document.getElementById("inputBox");
             const outputArea = document.getElementById("outputArea");
+            const copyMessage = document.getElementById("copyMessage");
 
             inputBox.addEventListener("keyup", function(event) {
                 if (event.keyCode === 13) {
                     const latexInput = inputBox.value.trim();
                     const ti_nspire_str = latex_to_ti_nspire(latexInput);
                     outputArea.textContent = ti_nspire_str;
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(ti_nspire_str).then(function() {
+                        console.log('Copied to clipboard:', ti_nspire_str);
+                        copyMessage.style.display = 'block';
+                        copyMessage.textContent = 'Copied to clipboard';
+                        setTimeout(function() {
+                            copyMessage.style.display = 'none';
+                        }, 2000); // Hide message after 2 seconds
+                    }, function(err) {
+                        console.error('Failed to copy: ', err);
+                        copyMessage.style.display = 'block';
+                        copyMessage.textContent = 'Failed to copy to clipboard';
+                        setTimeout(function() {
+                            copyMessage.style.display = 'none';
+                        }, 2000); // Hide message after 2 seconds
+                    });
                 }
             });
         }
