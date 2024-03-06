@@ -7,12 +7,32 @@
 <style>
     body {
         font-family: Arial, sans-serif;
+        background-color: #1e1e1e;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: auto;
+    }
+    #container {
+        text-align: center;
+    }
+    h1 {
+        margin-bottom: 20px;
     }
     #inputBox {
         width: 80%;
         padding: 10px;
         margin-bottom: 20px;
         font-size: 16px;
+        background-color: #333;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        box-sizing: border-box;
+        margin-right: auto; /* Center align */
+        margin-left: auto;  /* Center align */
     }
     #outputArea {
         width: 80%;
@@ -20,6 +40,11 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 16px;
+        background-color: #333;
+        color: #fff;
+        box-sizing: border-box;
+        margin-right: auto; /* Center align */
+        margin-left: auto;  /* Center align */
     }
     #copyMessage {
         display: none;
@@ -28,85 +53,86 @@
 </style>
 </head>
 <body>
-    <h1>Latex to TI-Nspire Converter</h1>
-    <input type="text" id="inputBox" placeholder="Enter LaTeX code and press Enter">
-    <div id="outputArea"></div>
-    <div id="copyMessage"></div>
+    <div id="container">
+        <h2>LaTeX to TI-Nspire Converter</h2>
+        <input type="text" id="inputBox" placeholder="Paste LaTeX code here">
+        <div id="outputArea"></div>
+        <div id="copyMessage"></div>
+        <h5>Make first character "s" to solve</h5>
+    </div>
 
     <script>
-        function main() {
-            function latex_to_ti_nspire(latex_str) {
-                latex_str = `${latex_str}`;
-                let solve = false;
-                if (latex_str[0] === "s") {
-                    solve = true;
-                    latex_str = latex_str.slice(1);
-                }
-                let ti_format = latex_str.replace(/{,}/g, ".");
-                ti_format = ti_format.replace(/\\cdot/g, "*");
-                ti_format = ti_format.replace(/\\ /g, "");
-                ti_format = ti_format.replace(/\\cos/g, "cos");
-                ti_format = ti_format.replace(/\\sin/g, "sin");
-                ti_format = ti_format.replace(/\\tan/g, "tan");
-                ti_format = ti_format.replace(/\\alpha/g, "α");
-                ti_format = ti_format.replace(/\\beta/g, "β");
-                ti_format = ti_format.replace(/\\gamma/g, "γ");
-                ti_format = ti_format.replace(/\\delta/g, "δ");
-                ti_format = ti_format.replace(/\\theta/g, "θ");
-                ti_format = ti_format.replace(/\\pi/g, "π");
-                ti_format = ti_format.replace(/\\deg/g, "°");
-                ti_format = ti_format.replace(/\\left\(/g, "(");
-                ti_format = ti_format.replace(/\\right\)/g, ")");
-                ti_format = ti_format.replace(/\\sqrt{/g, "sqrt(");
-                ti_format = ti_format.replace(/\\frac{/g, "(").replace(/}{/g, ")/(").replace(/}/g, ")");
-
-                
-                let index = 0;
-                while (ti_format.includes("^", index)) {
-                    index = ti_format.indexOf("^", index);
-                    ti_format = ti_format.slice(0, index) + ti_format.slice(index).replace("^", "^(", 1);
-                    index += 2;
-                    let end_bracket_index = index;
-                    while (end_bracket_index < ti_format.length && (ti_format[end_bracket_index].match(/\d/) || ti_format[end_bracket_index] === '.')) {
-                        end_bracket_index++;
-                    }
-                    ti_format = ti_format.slice(0, end_bracket_index) + ")" + ti_format.slice(end_bracket_index);
-                }
-            
-                if (solve) {
-                    ti_format = "solve(" + ti_format + ")";
-                }
-            
-                return ti_format;
+        function latex_to_ti_nspire(latex_str) {
+            latex_str = `${latex_str}`;
+            let solve = false;
+            if (latex_str[0] === "s" || latex_str[0] === "S") {
+                solve = true;
+                latex_str = latex_str.slice(1);
             }
+            let ti_format = latex_str.replace(/{,}/g, ".");
+            ti_format = ti_format.replace(/\\cdot/g, "*");
+            ti_format = ti_format.replace(/\\ /g, "");
+            ti_format = ti_format.replace(/\\cos/g, "cos");
+            ti_format = ti_format.replace(/\\sin/g, "sin");
+            ti_format = ti_format.replace(/\\tan/g, "tan");
+            ti_format = ti_format.replace(/\\alpha/g, "α");
+            ti_format = ti_format.replace(/\\beta/g, "β");
+            ti_format = ti_format.replace(/\\gamma/g, "γ");
+            ti_format = ti_format.replace(/\\delta/g, "δ");
+            ti_format = ti_format.replace(/\\theta/g, "θ");
+            ti_format = ti_format.replace(/\\pi/g, "π");
+            ti_format = ti_format.replace(/\\deg/g, "°");
+            ti_format = ti_format.replace(/\\left\(/g, "(");
+            ti_format = ti_format.replace(/\\right\)/g, ")");
+            ti_format = ti_format.replace(/\\sqrt{/g, "sqrt(");
+            ti_format = ti_format.replace(/\\frac{/g, "(").replace(/}{/g, ")/(").replace(/}/g, ")");
+
             
+            let index = 0;
+            while (ti_format.includes("^", index)) {
+                index = ti_format.indexOf("^", index);
+                ti_format = ti_format.slice(0, index) + ti_format.slice(index).replace("^", "^(", 1);
+                index += 2;
+                let end_bracket_index = index;
+                while (end_bracket_index < ti_format.length && (ti_format[end_bracket_index].match(/\d/) || ti_format[end_bracket_index] === '.')) {
+                    end_bracket_index++;
+                }
+                ti_format = ti_format.slice(0, end_bracket_index) + ")" + ti_format.slice(end_bracket_index);
+            }
+        
+            if (solve) {
+                ti_format = "solve(" + ti_format + ")";
+            }
+        
+            return ti_format;
+        }
+
+        function main() {
             const inputBox = document.getElementById("inputBox");
             const outputArea = document.getElementById("outputArea");
             const copyMessage = document.getElementById("copyMessage");
 
-            inputBox.addEventListener("keyup", function(event) {
-                if (event.keyCode === 13) {
-                    const latexInput = inputBox.value.trim();
-                    const ti_nspire_str = latex_to_ti_nspire(latexInput);
-                    outputArea.textContent = ti_nspire_str;
+            inputBox.addEventListener("input", function() {
+                const latexInput = inputBox.value.trim();
+                const ti_nspire_str = latex_to_ti_nspire(latexInput);
+                outputArea.textContent = ti_nspire_str;
 
-                    // Copy to clipboard
-                    navigator.clipboard.writeText(ti_nspire_str).then(function() {
-                        console.log('Copied to clipboard:', ti_nspire_str);
-                        copyMessage.style.display = 'block';
-                        copyMessage.textContent = 'Copied to clipboard';
-                        setTimeout(function() {
-                            copyMessage.style.display = 'none';
-                        }, 2000); // Hide message after 2 seconds
-                    }, function(err) {
-                        console.error('Failed to copy: ', err);
-                        copyMessage.style.display = 'block';
-                        copyMessage.textContent = 'Failed to copy to clipboard';
-                        setTimeout(function() {
-                            copyMessage.style.display = 'none';
-                        }, 2000); // Hide message after 2 seconds
-                    });
-                }
+                // Copy to clipboard
+                navigator.clipboard.writeText(ti_nspire_str).then(function() {
+                    console.log('Copied to clipboard:', ti_nspire_str);
+                    copyMessage.style.display = 'block';
+                    copyMessage.textContent = 'Copied to clipboard: ' + ti_nspire_str;
+                    setTimeout(function() {
+                        copyMessage.style.display = 'none';
+                    }, 2000); // Hide message after 2 seconds
+                }, function(err) {
+                    console.error('Failed to copy: ', err);
+                    copyMessage.style.display = 'block';
+                    copyMessage.textContent = 'Failed to copy to clipboard';
+                    setTimeout(function() {
+                        copyMessage.style.display = 'none';
+                    }, 2000); // Hide message after 2 seconds
+                });
             });
         }
 
